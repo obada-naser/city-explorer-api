@@ -1,75 +1,75 @@
+
 'use strict';
 
 
+
+
+
+require('dotenv').config();
 const express = require('express');
-const dotenv=require('dotenv');
-const server = express();
+
 const cors = require('cors');
-const weatherData = require('./data/weather.json');
-const {request}=require('express');
 
-// const { setEnvironmentData } = require('worker_threads');
-// const { send } = require('process');
-dotenv.config();
+const weather = require('./data/weather.json');
+
+
+const server = express();
+
 server.use(cors());
-const PORT = 3000;
-// process.env.PORT;
+
+
+const PORT = process.env.PORT || 3001;
+
+
+server.get('/weather', weatherMethod);
+
+function weatherMethod(req, res) {
+  let searchQuery = req.query.searchQuery;
+
+  const findCity = weather.find(findCity => findCity.city_name.toLowerCase() === searchQuery.toLowerCase());
+
+  // const findCity = weather.find((item) => {
+  //   if (item.city_name.toLowerCase() === searchQuery.toLowerCase());
 
 
 
 
-
-server.get('/weather', (req, res) => {
-  console.log(req.query);
-    const lat=req.query.lat;
-    const long=req.query.long;
-  const searchQuery = req.query.searchQuery;
-
-  let findCity = weatherData.find((item)=>{
-
-
-  if (item.city_name == searchQuery || item.long == long || item.lat == lat) {
-    console.log(item.city_name);
+  // });
+  if (findCity !== undefined) {
+    const arrWeather = findCity.data.map(item => new Forcast(item));
+    res.status(200).send(arrWeather);
 
   }
-  else{
-    return'error 404 ';
+
+  else {
+    res.status(500).send('there is an error');
   }
 }
 
-
   class Forcast {
-    constructor(date, description) {
-      this.date = date;
-      this.description = description;
-    }
-
-
+  constructor(item) {
+    this.date = item.valid_date;
+    this.description = item.weather.description;
   }
 
-  let newArr=[];
-
-  findCity.data.map((value,idx)=>{
-    newArr.push(new Forcast(value.datetime,`${value.low_temp},${value.high_temp},${value.weather.description}`));
-  });
+}
 
 
+server.use('*', (req, res) => res.status(404).send('page not found'));
 
-  console.log(findCity);
-  res.send(findCity);
 
-});
-server.get('*', (req, res) => {
-  res.status('404').send('page not found');
-});
+
+server.listen(PORT, () => console.log(`hello from the port num ${PORT}`));
 
 
 
 
 
-server.listen(PORT, () => {
-  console.log(`I am listening on port ${PORT}`);
 
-});
+
+
+
+
+
 
 
