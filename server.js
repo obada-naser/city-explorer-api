@@ -35,7 +35,7 @@ server.get('/weather', (req, res) => {
   else{
     return'error 404 ';
   }
-};
+}
 
 
   class Forcast {
