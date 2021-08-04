@@ -18,9 +18,9 @@ const server = express();
 server.use(cors());
 
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
-
+// || 3001;
 server.get('/weather', weatherMethod);
 
 function weatherMethod(req, res) {
