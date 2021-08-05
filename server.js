@@ -11,7 +11,7 @@ const express = require('express');
 const cors = require('cors');
 
 // const weather = require('./data/weather.json');
-const { default: axios } = require('axios');
+// const { default: axios } = require('axios');
 
 
 const server = express();
@@ -23,9 +23,15 @@ const PORT = process.env.PORT;
 
 // || 3001;
 // server.get('/weather', weatherMethod);
-server.get('/weather-bit', forcastMethod);
 
-server.get('/movie', movieGetter);
+
+
+const ForcastMethod=require('./ForcastMethod');
+const MovieGetter=require('./MovieGetter');
+
+server.get('/weather-bit', ForcastMethod);
+
+server.get('/movie', MovieGetter);
 
 // function weatherMethod(req, res) {
 //   let searchQuery = req.query.searchQuery;
@@ -50,65 +56,66 @@ server.get('/movie', movieGetter);
 //   }
 // }
 // IMG='https://image.tmdb.org/t/p/w500'
-async function forcastMethod(req, res) {
-  let { lat, lon } = req.query;
 
-  const url = `http://api.weatherbit.io/v2.0/forecast/daily?key=17282a5fe9c245fb94f593b6859b43c0&lon=${lon}&lat=${lat}`;
+// forcastMethod=async(req, res)=> {
+//   let { lat, lon } = req.query;
 
-
-  const gettingWeather = await axios.get(url);
-
-  const weatherArr = gettingWeather.data.data.map(item => new Forcast(item));
-
-  res.send(weatherArr);
+//   const url = `http://api.weatherbit.io/v2.0/forecast/daily?key=17282a5fe9c245fb94f593b6859b43c0&lon=${lon}&lat=${lat}`;
 
 
-}
+//   const gettingWeather = await axios.get(url);
+
+//   const weatherArr = gettingWeather.data.data.map(item => new Forcast(item));
+
+//   res.send(weatherArr);
 
 
-async function movieGetter(req, res) {
-  let {searchQuery} = req.query;
-  try{
-
-  const url = `http://api.themoviedb.org/3/search/movie?api_key=65909b684f9fcdb402457b5f66e91070&query=${searchQuery}`;
-
-  const findMovie = await axios.get(url);
-
-  const movieTheater = findMovie.data.results.map(item => new Movie(item));
-
-  console.log(movieTheater);
-  res.send(movieTheater);
-  }
-
-  catch(error) {
-    res.status(300).send('loading');
-  }
+// }
 
 
-}
+//   movieGetter=async(req, res)=> {
+//   let {searchQuery} = req.query;
+//   try{
 
-class Movie {
-  constructor(value) {
-    this.title = value.title;
-    this.overview = value.overview;
-    this.vote_average = value.vote_average;
-    this.vote_count = value.vote_count;
-    this.poster_path =`https://image.tmdb.org/t/p/w500${value.poster_path}`;
-    this.popularity = value.popularity;
-    this.release_date = value.release_date;
+//   const url = `http://api.themoviedb.org/3/search/movie?api_key=65909b684f9fcdb402457b5f66e91070&query=${searchQuery}`;
+
+//   const findMovie = await axios.get(url);
+
+//   const movieTheater = findMovie.data.results.map(item => new Movie(item));
+
+//   console.log(movieTheater);
+//   res.send(movieTheater);
+//   }
+
+//   catch(error) {
+//     res.status(300).send('loading');
+//   }
 
 
-  }
-}
+// }
+
+// class Movie {
+//   constructor(value) {
+//     this.title = value.title;
+//     this.overview = value.overview;
+//     this.vote_average = value.vote_average;
+//     this.vote_count = value.vote_count;
+//     this.poster_path =`https://image.tmdb.org/t/p/w500${value.poster_path}`;
+//     this.popularity = value.popularity;
+//     this.release_date = value.release_date;
+
+
+//   }
+// }
 // process.env.IMG
 
-class Forcast {
-  constructor(value) {
-    this.date = value.valid_date;
-    this.description = value.weather.description;
-  }
+// class Forcast {
+//   constructor(value) {
+//     this.date = value.valid_date;
+//     this.description = value.weather.description;
+//   }
 
-}
+// }
 
 
 server.use('*', (req, res) => res.status(404).send('page not found'));
