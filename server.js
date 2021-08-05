@@ -49,7 +49,7 @@ server.get('/movie', movieGetter);
 //     res.status(500).send('there is an error');
 //   }
 // }
-
+// IMG='https://image.tmdb.org/t/p/w500'
 async function forcastMethod(req, res) {
   let { lat, lon } = req.query;
 
@@ -68,15 +68,21 @@ async function forcastMethod(req, res) {
 
 async function movieGetter(req, res) {
   let {searchQuery} = req.query;
+  try{
 
   const url = `http://api.themoviedb.org/3/search/movie?api_key=65909b684f9fcdb402457b5f66e91070&query=${searchQuery}`;
 
   const findMovie = await axios.get(url);
 
-  const movieTheater = findMovie.data.results(item => new Movie(item));
+  const movieTheater = findMovie.data.results.map(item => new Movie(item));
 
+  console.log(movieTheater);
   res.send(movieTheater);
+  }
 
+  catch(error) {
+    res.status(300).send('loading');
+  }
 
 
 }
@@ -87,14 +93,14 @@ class Movie {
     this.overview = value.overview;
     this.vote_average = value.vote_average;
     this.vote_count = value.vote_count;
-    this.poster_path = value.poster_path;
+    this.poster_path =`https://image.tmdb.org/t/p/w500${value.poster_path}`;
     this.popularity = value.popularity;
     this.release_date = value.release_date;
 
 
   }
 }
-
+// process.env.IMG
 
 class Forcast {
   constructor(value) {
